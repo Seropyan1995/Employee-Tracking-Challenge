@@ -21,7 +21,7 @@ const db = mysql.createConnection({
   });
 // complete this cosmetic welcome message in the end!
 jumbotronMessage = () => {
-      console.log(" ___________________________________________")
+      console.log(" ___________________________________________ ")
       console.log("|                                           |");
       console.log("|                                           |");
       console.log("|                                           |");
@@ -60,7 +60,10 @@ jumbotronMessage = () => {
           addRole();
         }
         if(choices === 'Add an employee'){
-          addEmployee()
+          addEmployee();
+        }
+        if(choices === 'Update an employee'){
+          updateEmployee();
         }
         if(choices === 'Quit'){
           db.end();
@@ -176,6 +179,9 @@ const addRole = () => {
               console.log(
                 `Successfully added role: ${answers.title} with salary: ${answers.salary} in department ID: ${answers.departmentId}`
               );
+              promptUser();
+              viewRoles()
+
             }
           }
         );
@@ -272,7 +278,73 @@ const addEmployee = () => {
         })
         .catch((err) => {
           console.log(err);
+          promptUser();
         });
     });
   });
+};
+
+const updateEmployee = () => {
+  db.query('SELECT id, first_name, last_name FROM employee', (err, employees) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    const employeeChoices = employees.map((employee) => {
+      return {
+        name: `${employee.first_name} ${employee.last_name}`,
+        value: employee.id,
+      }
+    })
+    db.query('SELECT * FROM role', (err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      const roleChoices = results.map((role) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        return {
+          name: role.title,
+          value: role.id,
+        };
+      });
+
+      inquirer.prompt([
+        {
+          type: 'list',
+          name: 'employee',
+          message: 'Which employee would you like to update?',
+          choices: employeeChoices
+        },
+        {
+          type: 'list',
+          name: 'role',
+          message: 'Which role would you like to assign to the employee?',
+          choices: roleChoices
+        }
+      ])
+      .then((answers)=>{
+        const employeeID = answers.employee;
+        const roleId = answers.role;
+        db.query('UPDATE employee SET role_id = ? WHERE id = ?', [employeeID, roleId], (err)=>{
+          if(err){
+            console.log(err);
+          } else{
+            console.log(`successfully changed!`)
+            promptUser();
+          }
+        })
+
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    });
+
+  });
+
 };
