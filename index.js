@@ -187,5 +187,92 @@ const addRole = () => {
 };
 
 const addEmployee = () => {
+  db.query("SELECT * FROM role", (err, results) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
 
-}
+    const roleChoices = results.map((role) => {
+      return {
+        name: role.title,
+        value: role.id,
+      };
+    });
+
+    db.query('SELECT id, first_name, last_name FROM employee', (err, employees) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      const employeeChoices = employees.map((employee) => {
+        return {
+          name: `${employee.first_name} ${employee.last_name}`,
+          value: employee.id,
+        };
+      });
+
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "fname",
+          message: "What is the employee's first name?",
+          validate: (fname) => {
+            if (fname) {
+              return true;
+            } else {
+              console.log("You must enter a first name!");
+              return false;
+            }
+          },
+        },
+        {
+          type: "input",
+          name: "lname",
+          message: "What is the employee's last name?",
+          validate: (lname) => {
+            if (lname) {
+              return true;
+            } else {
+              console.log("You must enter a last name!");
+              return false;
+            }
+          },
+        },
+        {
+          type: "list",
+          name: "roleid",
+          message: "Select a department for this role:",
+          choices: roleChoices,
+        },
+        {
+          type: 'list',
+          name: 'manager',
+          message: "Who is this employee's manager?",
+          choices: employeeChoices,
+          validate: (manager) => {
+            if (manager) {
+              return true;
+            } else {
+              console.log('You must select a manager!')
+              return false;
+            }
+          }
+        },
+      ])
+        .then((answers) => {
+          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)', [answers.fname, answers.lname, answers.roleid, answers.manager.value], (err) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(`Successfully added ${answers.fname} ${answers.lname} to the database!`)
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  });
+};
