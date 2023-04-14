@@ -18,15 +18,8 @@ const db = mysql.createConnection({
     }
   });
 
-
-
-      console.log('Schema sourced successfully');
     // C:\Users\shiny\Employee Tracking Challenge\db\schema.sql
    jumbotronMessage= () => {
-    if(db === true){
-      schema
-      seedsSQL
-    }
       console.log('connection worked')
       console.log("***********************************");
       console.log("*                                 *");
@@ -34,5 +27,3 @@ const db = mysql.createConnection({
       console.log("*                                 *");
       console.log("***********************************");
   };
-
-
