@@ -14,13 +14,12 @@ const db = mysql.createConnection({
     if(err){
       console.log(err)
     }else{
-      console.log('Connected to DB');
+      jumbotronMessage();
     }
   });
 
     // C:\Users\shiny\Employee Tracking Challenge\db\schema.sql
    jumbotronMessage= () => {
-      console.log('connection worked')
       console.log("***********************************");
       console.log("*                                 *");
       console.log("*      TO DO: WELCOME BOARD       *");
