@@ -33,7 +33,7 @@ const db = mysql.createConnection({
       promptUser()
     }
   });
-// complete this cosmetic welcome message in the end!
+// welcome screen for prompt
 jumbotronMessage = () => {
   console.log(
     logo({
@@ -49,8 +49,10 @@ jumbotronMessage = () => {
     .render()
 );
 }
+// prompt options
   const options = ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee', 'Quit'
  ]
+//  prompt main menu
   const promptUser = () =>{
     inquirer.prompt([
       {
@@ -62,8 +64,9 @@ jumbotronMessage = () => {
     ])
       .then((answers)=>{
         const {choices} = answers;
-
+        // prompt option conditional
         if(choices === 'View all departments'){
+          // calling funtion on input
           viewDepartments();
         }
         if(choices === 'View all roles'){
@@ -84,12 +87,14 @@ jumbotronMessage = () => {
         if(choices === 'Update an employee'){
           updateEmployee();
         }
+        // cancels the prompt interface when option picked
         if(choices === 'Quit'){
           db.end();
           console.log('You have successfully Quit!');
         }
       })
   };
+  // Below here are functions for queries based on user input!
   const viewDepartments = () => {
     db.query('SELECT * FROM department', (err, results)=>{
       if(err){
@@ -148,16 +153,16 @@ const addDepartment = () => {
 
 const addRole = () => {
   // Fetch the department data from the database
-  db.query("SELECT * FROM department", (err, results) => {
+  db.query("SELECT * FROM role", (err, results) => {
     if (err) {
       console.log(err);
       return;
     }
 
-    const departmentChoices = results.map((department) => {
+    const departmentChoices = results.map((role) => {
       return {
-        name: department.name,
-        value: department.id,
+        name: role.title,
+        value: role.id,
       };
     });
 
@@ -208,7 +213,7 @@ const addRole = () => {
                 `Successfully added role!`
               );
               promptUser();
-              viewRoles()
+              viewRoles();
 
             }
           }
@@ -227,7 +232,7 @@ const addEmployee = () => {
       return;
     }
 
-    const roleChoices = results.map((role) => {
+    const roleChoicesTwo = results.map((role) => {
       return {
         name: role.title,
         value: role.id,
@@ -242,7 +247,7 @@ const addEmployee = () => {
 
       const employeeChoices = employees.map((employee) => {
         return {
-          name: `${employee.first_name} ${employee.last_name}`,
+          name: employee.first_name + employee.last_name,
           value: employee.id,
         };
       });
@@ -250,10 +255,10 @@ const addEmployee = () => {
       inquirer.prompt([
         {
           type: "input",
-          name: "fname",
+          name: "firstname",
           message: "What is the employee's first name?",
-          validate: (fname) => {
-            if (fname) {
+          validate: (firstname) => {
+            if (firstname) {
               return true;
             } else {
               console.log("You must enter a first name!");
@@ -263,10 +268,10 @@ const addEmployee = () => {
         },
         {
           type: "input",
-          name: "lname",
+          name: "lastname",
           message: "What is the employee's last name?",
-          validate: (lname) => {
-            if (lname) {
+          validate: (lastname) => {
+            if (lastname) {
               return true;
             } else {
               console.log("You must enter a last name!");
@@ -278,7 +283,7 @@ const addEmployee = () => {
           type: "list",
           name: "roleid",
           message: "Select a department for this role:",
-          choices: roleChoices,
+          choices: roleChoicesTwo,
         },
         {
           type: 'list',
@@ -296,17 +301,18 @@ const addEmployee = () => {
         },
       ])
         .then((answers) => {
-          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)', [answers.fname, answers.lname, answers.roleid, answers.manager.value], (err) => {
+          db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)', [answers.firstname, answers.lastname, answers.roleid, answers.manager.value], (err) => {
             if (err) {
               console.log(err);
             } else {
-              console.log(`Successfully added ${answers.fname} ${answers.lname} to the database!`)
+              console.log("Successfully added to the database!")
+              promptUser();
             }
           });
         })
         .catch((err) => {
           console.log(err);
-          promptUser();
+
         });
     });
   });
@@ -320,11 +326,11 @@ const updateEmployee = () => {
     }
     const employeeChoices = employees.map((employee) => {
       return {
-        name: `${employee.first_name} ${employee.last_name}`,
+        name: employee.first_name + employee.last_name,
         value: employee.id,
       }
     })
-    db.query('SELECT * FROM role', (err, results) => {
+    db.query('SELECT title FROM role', (err, results) => {
       if (err) {
         console.log(err);
         return;
