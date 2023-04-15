@@ -2,6 +2,20 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const queries = require('./prompt-functions')
+const logo = require('asciiart-logo');
+const config = require('./package.json');
+const longText = 'Lorem ipsum dolor sit amet, ' +
+    'consectetur adipiscing elit, ' +
+    'sed do eiusmod tempor incididunt ut labore et ' +
+    'dolore magna aliqua. Ut enim ad minim veniam, ' +
+    'quis nostrud exercitation ullamco laboris ' +
+    'nisi ut aliquip ex ea commodo consequat. Duis aute ' +
+    'irure dolor in reprehenderit in voluptate velit esse ' +
+    'cillum dolore eu fugiat nulla pariatur. ' +
+    'Excepteur sint occaecat cupidatat non proident, ' +
+    'sunt in culpa qui officia deserunt mollit anim ' +
+    'id est laborum.';
+
 
 // creates connection to the DB
 const db = mysql.createConnection({
@@ -21,15 +35,20 @@ const db = mysql.createConnection({
   });
 // complete this cosmetic welcome message in the end!
 jumbotronMessage = () => {
-      console.log(" ___________________________________________ ")
-      console.log("|                                           |");
-      console.log("|                                           |");
-      console.log("|                                           |");
-      console.log("|                                           |");
-      console.log("|      TO DO: WELCOME BOARD                 |");
-      console.log("|                                           |");
-      console.log("|___________________________________________|");
-  };
+  console.log(
+    logo({
+        name: 'Company \n Tracker\n Assessment',
+        font: 'ANSI Shadow',
+        lineChars: 5,
+        padding: 3,
+        margin: 1,
+        borderColor: 'grey',
+        logoColor: 'white',
+        textColor: 'white',
+    })
+    .render()
+);
+}
   const options = ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee', 'Quit'
  ]
   const promptUser = () =>{
@@ -71,8 +90,11 @@ jumbotronMessage = () => {
         }
       })
   };
-  const viewDepartments = () =>{
+  const viewDepartments = () => {
     db.query('SELECT * FROM department', (err, results)=>{
+      if(err){
+        console.log(err)
+      }
       console.table(results);
       promptUser();
     });
@@ -80,19 +102,25 @@ jumbotronMessage = () => {
 
 const viewRoles = () => {
     db.query('SELECT * FROM role', (err, results)=>{
+      if(err){
+        console.log(err)
+      }
       console.table(results);
       promptUser();
     });
   };
 
-const viewEmployees = ()=> {
+const viewEmployees = () => {
     db.query('SELECT * FROM employee', (err, results)=>{
+      if(err){
+        console.log(err)
+      }
       console.table(results);
       promptUser();
     });
   };
 
-const addDepartment = () =>{
+const addDepartment = () => {
     inquirer.prompt([{
       type: 'input',
       name: 'department',
@@ -177,7 +205,7 @@ const addRole = () => {
               console.log(err);
             } else {
               console.log(
-                `Successfully added role: ${answers.title} with salary: ${answers.salary} in department ID: ${answers.departmentId}`
+                `Successfully added role!`
               );
               promptUser();
               viewRoles()
