@@ -17,6 +17,6 @@ An employee tracker that uses the command line to interract with the database to
 [![A video thumbnail shows the command-line employee management application with a play button overlaying the view.](./Assets/Screenshot.png)](https://2u-20.wistia.com/medias/2lnle7xnpk)
 
 ## Changes to be made
-For the purpose of showcasing the minimum skills taught within the weeks worth of course, this shows what was retained and learned. With that being said there are minor bugs that arent relevent that can be adjusted to make this a more fluid and bug free process.
+For the purpose of showcasing the minimum skills taught within the weeks worth of course, this shows what was retained and learned. With that being said there are minor bugs that arent relevent that can be adjusted to make this a more fluid and bug free process. Another change to be made would be creating a file to put all the prompt functions within in it and export it to the index.js file.
 ## Contact
 - https://github.com/Seropyan1995/Employee-Tracking-Challenge
