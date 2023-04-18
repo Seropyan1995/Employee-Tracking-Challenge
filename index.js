@@ -53,7 +53,8 @@ jumbotronMessage = () => {
   const options = ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee', 'Quit'
  ]
 //  prompt main menu
-  const promptUser = () =>{
+// Below here are functions for queries based on user input!
+const promptUser = () =>{
     inquirer.prompt([
       {
         type: 'list',
@@ -94,8 +95,8 @@ jumbotronMessage = () => {
         }
       })
   };
-  // Below here are functions for queries based on user input!
-  const viewDepartments = () => {
+
+const viewDepartments = () => {
     db.query('SELECT * FROM department', (err, results)=>{
       if(err){
         console.log(err)
